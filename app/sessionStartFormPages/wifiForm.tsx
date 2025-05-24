@@ -26,7 +26,7 @@ export default function WifiForm() {
   return (
     <View style={styles.container}>
       {/* Custom Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+      <TouchableOpacity style={styles.backButton} onPress={() => router.replace("/(tabs)/home")}>
         <Ionicons name="arrow-back" size={24} color="black" />
       </TouchableOpacity>
 

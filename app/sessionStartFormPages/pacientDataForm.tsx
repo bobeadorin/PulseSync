@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { SessionData } from "../../types";
 import useWorkoutSessionData from "../../hooks/useWorkoutSessionData";
+import useBLE from "../../hooks/useBLE";
 
 const predefinedTimes = [15, 30, 45, 60, 90, 120];
 
@@ -26,6 +27,11 @@ export default function SessionForm() {
   const [customTime, setCustomTime] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const { setSessionData } = useWorkoutSessionData();
+  const { requestPermissions } = useBLE();
+
+  useEffect(() => {
+    requestPermissions();
+  }, []);
 
   const handleSubmit = () => {
     const workoutTime = includeWorkoutTime ? (customTime ? parseInt(customTime) : selectedTime) : null;
