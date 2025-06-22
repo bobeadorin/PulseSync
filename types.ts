@@ -7,16 +7,23 @@ export type AuthContextType = {
   loading: boolean;
 };
 
-export type WorkoutData = { timestamp: string; pulse: number }[];
-
-export type WorkoutGraphProps = {
-  workoutData: WorkoutData;
-  patientName?: string;
-  patientAge?: number;
-  workoutDate?: string;
-  workoutTime?: string;
+export type SensorData = {
+  pulse: number;
+  steps: number;
+  timestamp: Date;
 };
-
+export type WorkoutData = { timestamp: string; pulse: number }[];
+export interface WorkoutDataPoint {
+  timestamp: string;
+  pulse: number;
+}
+export interface WorkoutGraphProps {
+  workoutData: WorkoutDataPoint[];
+  patientAge: number;
+  patientName: string;
+  workoutDate: string;
+  onPress?: () => void;
+}
 export type SessionData = {
   doctorName: string;
   patientName: string;

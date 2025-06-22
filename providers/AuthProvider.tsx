@@ -26,8 +26,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const handleUserData = async () => {
+      const res = await supabase.auth.getSession();
+      const user = await supabase.auth.getUser(res.data.session?.access_token);
+    };
+
     if (session?.user) {
-      setUserData(session.user); // cache the user
+      handleUserData();
+
+      setUserData(session.user);
     } else {
       setUserData(null);
     }

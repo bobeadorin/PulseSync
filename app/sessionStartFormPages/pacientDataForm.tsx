@@ -13,10 +13,10 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { SessionData } from "../../types";
-import useWorkoutSessionData from "../../hooks/useWorkoutSessionData";
-import useBLE from "../../hooks/useBLE";
+import useBLE from "../../hooks/useBle";
+import { useWorkout } from "../../hooks/useWorkout";
 
-const predefinedTimes = [15, 30, 45, 60, 90, 120];
+const predefinedTimes = [1, 15, 30, 45, 60, 90, 120];
 
 export default function SessionForm() {
   const [doctorName, setDoctorName] = useState("");
@@ -26,32 +26,35 @@ export default function SessionForm() {
   const [selectedTime, setSelectedTime] = useState(predefinedTimes[0]);
   const [customTime, setCustomTime] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
-  const { setSessionData } = useWorkoutSessionData();
   const { requestPermissions } = useBLE();
-
+  const { setPacientData } = useWorkout();
   useEffect(() => {
     requestPermissions();
   }, []);
 
   const handleSubmit = () => {
     const workoutTime = includeWorkoutTime ? (customTime ? parseInt(customTime) : selectedTime) : null;
-
+    const parsedWorkoutTime = parseTimesToMilliseconds(workoutTime);
     const formData: SessionData = {
       doctorName,
       patientName,
       age: parseInt(age),
-      workoutTime,
+      workoutTime: parsedWorkoutTime,
     };
     if (formData.doctorName.trim() !== "" && formData.patientName.trim() !== "" && formData.age > 0) {
-      setSessionData(formData);
-      router.replace("/sessionStartFormPages/initialization");
+      setPacientData(formData);
+      router.replace("/(tabs)/realtime");
     } else return;
     console.log("Form submitted:", formData);
   };
 
+  const parseTimesToMilliseconds = (time: number | null) => {
+    if (time) return time * 60 * 1000;
+    return null;
+  };
+
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
-      {/* Custom Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
         <Ionicons name="arrow-back" size={24} color="black" />
       </TouchableOpacity>
@@ -59,25 +62,21 @@ export default function SessionForm() {
         <View style={styles.formContainer}>
           <Text style={styles.header}>Session Details</Text>
 
-          {/* Doctor's Name */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Doctor's Name</Text>
             <TextInput style={styles.input} placeholder="Dr. Smith" value={doctorName} onChangeText={setDoctorName} />
           </View>
 
-          {/* Patient Name */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Patient Name</Text>
             <TextInput style={styles.input} placeholder="John Doe" value={patientName} onChangeText={setPatientName} />
           </View>
 
-          {/* Age */}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Age</Text>
             <TextInput style={styles.input} placeholder="30" value={age} onChangeText={setAge} keyboardType="numeric" />
           </View>
 
-          {/* Workout Time Toggle */}
           <View style={[styles.switchContainer, { justifyContent: "center" }]}>
             <Text style={styles.label}>Include Workout Time</Text>
             <Switch
@@ -88,7 +87,6 @@ export default function SessionForm() {
             />
           </View>
 
-          {/* Workout Time Selection */}
           {includeWorkoutTime && (
             <View style={styles.timeSelectionContainer}>
               <Text style={styles.label}>Workout Time (minutes)</Text>

@@ -10,20 +10,6 @@ export default function SessionStackLayout() {
       }}
     >
       <Stack.Screen
-        name="wifiForm"
-        options={{
-          title: "Wi-Fi Setup", // Custom title
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="pacientDataForm"
-        options={{
-          title: "Wi-Fi Setup", // Custom title
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
         name="initialization"
         options={{
           title: "Initialization", // Custom title
